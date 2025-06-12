@@ -194,3 +194,10 @@ cython_debug/
 .cursorindexingignore
 
 .vscode/
+
+# Google Cloud Platform credentials
+google_service_account.json
+*service_account*.json
+*.json
+!package*.json
+!tsconfig*.json

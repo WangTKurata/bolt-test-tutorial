@@ -43,11 +43,18 @@ pip install -r requirements.txt
 $env:SLACK_BOT_TOKEN="xoxb-XXXXX"
 $env:SLACK_APP_TOKEN="xapp-YYYYY"
 $env:OPENAI_API_KEY="sk-ZZZZZ"
+$env:GOOGLE_CREDENTIALS_PATH="google_service_account.json"
 ```
 
 ### 3. Google Sheets API認証
-- `.vscode/boltslacktest-wang-40b68186e2db.json` にサービスアカウントの認証情報が格納されています
+- Google Cloud Platformのサービスアカウント認証情報JSONファイルが必要です
+- デフォルトファイル名: `google_service_account.json`
+- 環境変数 `GOOGLE_CREDENTIALS_PATH` で別のパスを指定可能
 - このサービスアカウントは対象のGoogle Spreadsheetへのアクセス権限が必要です
+
+#### セキュリティ上の注意
+- 認証情報ファイルは `.gitignore` に追加してGitHubにコミットしないでください
+- ファイル名は汎用的な名称を使用し、プロジェクト固有の情報を含めないでください
 
 ### 4. OpenAI API設定
 - OpenAI APIキーが必要です

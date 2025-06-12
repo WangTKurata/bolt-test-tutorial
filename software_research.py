@@ -209,7 +209,8 @@ def research_and_suggest_software(software_name, proxy_info=None):
         dict: 調査結果と追加提案
     """
     try:
-        credentials_path = ".vscode/boltslacktest-wang-40b68186e2db.json"
+        # 認証情報ファイルのパス（環境変数から取得、デフォルトは汎用名）
+        credentials_path = os.environ.get("GOOGLE_CREDENTIALS_PATH", "google_service_account.json")
         researcher = SoftwareResearcher(credentials_path, proxy_info)
         
         # ソフトウェア調査

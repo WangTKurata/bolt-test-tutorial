@@ -210,8 +210,8 @@ def search_in_target_spreadsheet_proxy(search_text, proxy_info=None):
         str: 検索結果メッセージ（「ありました」または「ありません」）
     """
     try:
-        # 認証情報ファイルのパス
-        credentials_path = ".vscode/boltslacktest-wang-40b68186e2db.json"
+        # 認証情報ファイルのパス（環境変数から取得、デフォルトは汎用名）
+        credentials_path = os.environ.get("GOOGLE_CREDENTIALS_PATH", "google_service_account.json")
         
         # 検索対象のスプレッドシート名
         target_spreadsheet = "I want to use free software / フリーソフトを利用したい のコピー"
