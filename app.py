@@ -4,7 +4,7 @@ import re
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-from google_sheets_handler import search_in_target_spreadsheet
+from google_sheets_handler_advanced import advanced_search_in_target_spreadsheet
 
 # ボットトークンを渡してアプリを初期化します
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
@@ -53,9 +53,22 @@ def handle_app_mention(event, say):
         clean_text = re.sub(r'<@[A-Z0-9]+>', '', text).strip()
         
         if clean_text:
-            # Google Spreadsheetでテキストを検索
-            result = search_in_target_spreadsheet(clean_text)
-            say(f"「{clean_text}」を検索しました: {result}")
+            # Google Spreadsheetで部分一致検索を実行（4行目以降のみ）
+            result = advanced_search_in_target_spreadsheet(clean_text, search_types=['partial'])
+            
+            if result['found']:
+                # 検索結果が見つかった場合
+                response = f"「{clean_text}」の検索結果:\n{result['message']}\n\n"
+                
+                # 上位3件の結果を表示
+                for i, match in enumerate(result['matches'][:3], 1):
+                    response += f"{i}. {match['text'][:100]}{'...' if len(match['text']) > 100 else ''}\n"
+                    response += f"   位置: {match['position']}\n\n"
+                
+                say(response)
+            else:
+                # 検索結果が見つからなかった場合
+                say(f"「{clean_text}」は見つかりませんでした")
         else:
             # テキストが空の場合は従来の応答
             say("ふむふむ")
