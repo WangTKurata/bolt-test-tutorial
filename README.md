@@ -18,6 +18,19 @@ Slack BotとGoogle Sheets連携アプリケーション
    - 検索結果には位置情報を表示
    - 上位3件の結果を詳細表示
 
+3. **ソフトウェア調査機能（ChatGPT API連携）**
+   - 検索で見つからなかった場合、ChatGPT APIを使用してソフトウェア情報を自動調査
+   - **調査項目**:
+     - カテゴリ（ソフトウェアの種類）
+     - 公式ダウンロードページ
+     - 対応プラットフォーム（OS）
+     - セキュリティ上の注意点
+     - 企業での無料利用可否
+     - その他特記事項
+   - 調査結果をスプレッドシートへの追加提案として提示
+   - Remarks列に「承認待ち」として記録
+   - 最終的な承認は人間が判断
+
 ## セットアップ
 
 ### 1. 依存関係のインストール
@@ -29,11 +42,17 @@ pip install -r requirements.txt
 ```powershell
 $env:SLACK_BOT_TOKEN="xoxb-XXXXX"
 $env:SLACK_APP_TOKEN="xapp-YYYYY"
+$env:OPENAI_API_KEY="sk-ZZZZZ"
 ```
 
 ### 3. Google Sheets API認証
 - `.vscode/boltslacktest-wang-40b68186e2db.json` にサービスアカウントの認証情報が格納されています
 - このサービスアカウントは対象のGoogle Spreadsheetへのアクセス権限が必要です
+
+### 4. OpenAI API設定
+- OpenAI APIキーが必要です
+- ソフトウェア調査機能で使用されます
+- 環境変数 `OPENAI_API_KEY` に設定してください
 
 ### 4. 企業セキュリティソフトウェア（Netskope等）の対応
 企業環境でNetskopeなどのセキュリティソフトウェアが通信を阻害する場合：
@@ -180,9 +199,41 @@ Slackでボットをメンションして検索したいテキストを送信：
 ```
 → 部分一致検索で「ソフト」を含むテキストを検索（4行目以降のみ）
 
-### 部分一致検索のテスト実行
+### ソフトウェア調査機能の使用例
+
+検索で見つからないソフトウェアをメンションした場合：
+```
+@bot Visual Studio Code
+```
+
+ボットが応答（ソフトウェア調査結果）：
+```
+「Visual Studio Code」は見つかりませんでした。調査を開始します...
+
+「Visual Studio Code」の調査結果:
+
+📋 カテゴリ: コードエディタ・統合開発環境
+🌐 ダウンロードページ: https://code.visualstudio.com/
+💻 プラットフォーム: Windows, Mac, Linux
+🏢 商用利用: 可能（無料）
+📝 備考: 承認待ち - Microsoft製の軽量で高機能なコードエディタ
+⚠️ 特記事項: オープンソース、豊富な拡張機能
+
+✅ この情報をリストに追加することを提案します。
+管理者による最終承認が必要です。
+```
+
+### テスト実行
 
 ```bash
 # 部分一致検索のテスト（4行目以降のみ）
 python test_partial_search.py
+
+# ソフトウェア調査機能のテスト
+python test_software_research.py
 ```
+
+### ファイル構成（追加）
+
+- `software_research.py`: ソフトウェア調査機能を担当するモジュール（ChatGPT API連携）
+- `test_software_research.py`: ソフトウェア調査機能のテストスクリプト
